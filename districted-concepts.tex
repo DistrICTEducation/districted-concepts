@@ -1,0 +1,129 @@
+\documentclass[a4paper,twoside,10pt]{book}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[USenglish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[ansinew]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{a4wide}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{pdfpages}
+\usepackage{nomencl}
+\usepackage{tabularx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PREAMBLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeindex
+\title{CONCEPTS | DistrICT Education}
+\author{Joris Schelfaut}
+\date{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\cleardoublepage %The first chapter should start on an odd page.
+\pagestyle{fancy} % Now display headings: headings / fancy / plain ...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PREFACE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rmfamily
+\setcounter{page}{0}
+\pagenumbering{roman}
+
+\input{tex/foreword}
+
+\pagestyle{empty} %No headings for the first pages.
+\tableofcontents %Table of contents
+
+\setcounter{page}{0}
+\pagenumbering{arabic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PARTS / CHAPTERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\part{Programming fundamentals}\label{part:programming-fundamentals}
+\input{tex/programming-fundamentals/expressions}
+\input{tex/programming-fundamentals/complexity}
+\input{tex/programming-fundamentals/data-structures}
+\input{tex/programming-fundamentals/algorithms}
+
+\part{Programming concepts}\label{part:programming-concepts}
+\input{tex/programming-concepts/data}
+\input{tex/programming-concepts/references}
+\input{tex/programming-concepts/continuations}
+\input{tex/programming-concepts/encapsulation}
+
+\part{Systems and architectures}\label{part:systems-and-architectures}
+\input{tex/systems-and-architectures/operating-systems}
+\input{tex/systems-and-architectures/computer-networks}
+\input{tex/systems-and-architectures/distributed-systems}
+
+\part{Security}\label{part:security}
+\input{tex/systems-and-architectures/introduction}
+\input{tex/systems-and-architectures/low-level-security}
+\input{tex/systems-and-architectures/access-control}
+\input{tex/systems-and-architectures/web-application-security}
+
+\part{Software design}\label{part:software-design}
+\input{tex/software-design/requirements-analysis}
+\input{tex/software-design/architectural-design}
+\input{tex/software-design/hci}
+\input{tex/software-design/design-patterns}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% APPENDICES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\input{tex/case-study}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BIBLIOGRAPHY AND OTHER LISTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addtocontents{toc}{\protect\vspace*{\baselineskip}}
+
+%% The Bibliography
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{abbrv}
+\bibliography{bib/references}
+
+%% The List of Figures
+\clearpage
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+%% The List of Tables
+\clearpage
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+%% Index
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+\end{document}
