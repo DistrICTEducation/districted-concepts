@@ -33,8 +33,8 @@ In the next paragraphs we discuss arrays and recursive data structures.
 
 An array is an indexed sequence of elements. The first data element has the index zero, and the index of the last element is equal to the length of the sequence minus one. In many programming languages it is a primitive data type and forms the basis of many data structure implementations. An array has a fixed size and its slots can be directly accessed through their associated index. The data elements in an array are all of the same type. Figure \ref{fig:array} shows an example of an array of integers.
 
-\begin{figure}
-	\begin{center}		
+\begin{figure}[H]
+	\begin{center}
 		\includegraphics[width=0.6\columnwidth]{img/programming-fundamentals/array}
 		\caption{An array of integers with length = $10$. The array has as its first element, i.e., at index $0$, the integer $45$, as last element, i.e., at index $9$, the number $38$. The array also contains two $null$ values, which are default values that don't represent a specific data element.}
 		\label{fig:array}
@@ -60,8 +60,8 @@ Recursive data structures are yet another way to structure data. In this case da
 
 The general model for a node in a recursive data structure is shown in figure \ref{fig:recursive-data-node}.
 
-\begin{figure}
-	\begin{center}		
+\begin{figure}[H]
+	\begin{center}
 		\includegraphics[width=0.4\columnwidth]{img/programming-fundamentals/node-general-model}
 		\caption{A model for a node in a recursive data structure.}
 		\label{fig:recursive-data-node}
@@ -85,18 +85,60 @@ public class Node<E> {
 }
 \end{lstlisting}
 
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.7\columnwidth]{img/programming-fundamentals/linked-list}
+		\caption{Linked list data structure.}
+		\label{fig:linked-list}
+	\end{center}
+\end{figure}
+
 
 \paragraph{Doubly-linked list}
+
+In a doubly linked list, each node contains a reference to its child and a reference to its parent. An advantage of doubly linked lists is that one can iterate through such a list in both directions. Updating the data structure becomes slightly more complicated as more references must be kept up-to-date.
+
+\begin{lstlisting}[language=java, caption=Node implementation for a doubly linked list., label=listing:node-doubly-linked-list]
+public class Node<E> {
+	public E value;
+	public Node previous;
+	public Node next;
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.7\columnwidth]{img/programming-fundamentals/doubly-linked-list}
+		\caption{Doubly linked list data structure.}
+		\label{fig:doubly-linked-list}
+	\end{center}
+\end{figure}
 
 
 \paragraph{Circular linked list}
 
+A circular linked list is a linked list, doubly linked or not, where the last element is the parent of the first element. Traversing a circular list has the advantage that one doesn't necessarily need to start from the first node. A circular linked list still has all of the other characteristics of linked lists.
 
 
 
 \subsubsection{Trees}
 
 Trees can be seen as an extension of a linked list that can have more than one child. The root of the tree is the only element in the tree that has no parent element; all other elements have exactly one parent. Note that for this reason, a tree can never be circular. A node that has no children is called a leaf. The length longest path starting from the root and ending in a leaf, passing through a node at most once, is the height of the tree.
+
+\begin{lstlisting}[language=java, caption=Node implementation for a standard tree., label=listing:node-doubly-linked-list]
+public class Node<E> {
+	public E value;
+	public array<Node> children;
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+	\begin{center}		
+		\includegraphics[width=0.7\columnwidth]{img/programming-fundamentals/tree}
+		\caption{Tree data structure.}
+		\label{fig:tree}
+	\end{center}
+\end{figure}
 
 
 \paragraph{Binary trees}
