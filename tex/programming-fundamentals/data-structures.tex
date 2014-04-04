@@ -45,7 +45,7 @@ A two dimensional array can be constructed as an array of arrays. If all arrays 
 
 Arrays can also be thought of as vectors or points within a space. For an array of length $L$, each slot would correspond to an axis in an $L$-dimensional space.
 
-Retrieving, adding and removing an element from an array is very efficient as this can be done directly in constant time. An important design decision though is what to do when trying to access an element out of the array bounds. In programming languages such as Java, a ArrayOutOfBounds exception is thrown in that case. Alternatively, doing this could just have no effect, but this might not be desirable as the programmer may want some feedback when applying such an operation.
+Retrieving, adding and removing an element from an array is very efficient as this can be done directly in constant time. An important design decision though is what to do when trying to access an element out of the array bounds. In programming languages such as Java, a \texttt{ArrayOutOfBounds} exception is thrown in that case. Alternatively, doing this could just have no effect, but this might not be desirable as the programmer may want some feedback when applying such an operation.
 
 However, inserting an element between two consecutive elements is a very expensive operation in arrays. In a worst case scenario this may result in having the move all the elements before adding the new element to the array. As a result, one thing to consider when using arrays for the implementation of a data structure, is whether or not many in-place additions will occur.
 
@@ -62,7 +62,7 @@ The general model for a node in a recursive data structure is shown in figure \r
 
 \begin{figure}[H]
 	\begin{center}
-		\includegraphics[width=0.4\columnwidth]{img/programming-fundamentals/node-general-model}
+		\includegraphics[width=0.3\columnwidth]{img/programming-fundamentals/node-general-model}
 		\caption{A model for a node in a recursive data structure.}
 		\label{fig:recursive-data-node}
 	\end{center}
@@ -133,7 +133,7 @@ public class Node<E> {
 \end{lstlisting}
 
 \begin{figure}[H]
-	\begin{center}		
+	\begin{center}
 		\includegraphics[width=0.7\columnwidth]{img/programming-fundamentals/tree}
 		\caption{Tree data structure.}
 		\label{fig:tree}
@@ -278,6 +278,8 @@ A graph consists of a set of nodes that are interconnected through a set of edge
 	\begin{tabular}{p{150px} | p{250px}}
 		\textbf{Operation} & \textbf{Description} \\
 		\hline
+		addVertex($v$) & Adds a new vertex $v$ to the graph. \\
+		removeVertex($v$) & Removes the given vertex $v$ from the graph. \\
 		addEdge($v$, $w$) & Adds a new edge with end points in vertices $v$ and $w$ to the graph. \\
 		removeEdge($v$, $w$) & Removes an edge with end points in vertices $v$ and $w$ from the graph. \\
 		findPath($v$,$w$,$Algorithm$)  $\rightarrow$ List<$Edge$> & Returns all the edges in a path, i.e., an ordered list of edges, between vertex $v$ and vertex $w$ using a given algorithm or policy. The result will depend on the algorithm that implements this method (e.g. path flooding, shortest path, ...). If no such path exists, an empty list is returned. \\
@@ -286,6 +288,56 @@ A graph consists of a set of nodes that are interconnected through a set of edge
 \end{table}
 
 Formally a graph $G$ is defined as a tuple ($V$,$E$) where $V$ is the set of vertices or nodes and $E$ the set of edges. Every edge $e$ in $E$ is an pair ($v$,$w$) in $V x V$.
+
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\columnwidth]{img/programming-fundamentals/graph}
+		\caption{Graph data structure.}
+		\label{fig:graph}
+	\end{center}
+\end{figure}
+
+
+\begin{lstlisting}[language=java, caption=Vertex in a graph., label=listing:graph:vertex]
+public class Vertex<E> {}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=java, caption=Edge in a graph., label=listing:graph:edge]
+public class Edge<T> {
+	public Vertex v;
+	public Vertex w;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=java, caption=Graph implementation skeleton., label=listing:graph:vertex]
+public class Graph {
+	public Set<Vertex> vertices;
+	public Set<Edge> edges;
+	
+	void addVertex(Vertex v) {
+		vertices.add(v);
+	}
+	
+	void removeVertex(Vertex v) {
+		vertices.remove(v);
+	}
+	
+	void addEdge(Vertex v, Vertex w) {
+		edges.add(new Edge(v,w));
+	}
+	
+	void removeEdge(Edge e) {
+		edges.remove(e);
+	}
+	
+	Bag<Edge> findPath(Vertex v, Vertex w, Algorithm) {
+		return Algorithm.findPath(v,w);
+	}
+}
+\end{lstlisting}
 
 
 \subsection{Undirected graphs}
