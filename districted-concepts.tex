@@ -28,6 +28,8 @@
 \usepackage{nomencl}
 \usepackage{tabularx}
 \usepackage{enumerate}
+\usepackage{multibib}
+%\usepackage{bibtopic}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,11 +77,11 @@
 \input{tex/programming-fundamentals/data-structures}
 \input{tex/programming-fundamentals/algorithms}
 
-\part{Programming language concepts}\label{part:programming-language-concepts}
-\input{tex/programming-language-concepts/data}
-\input{tex/programming-language-concepts/references}
-\input{tex/programming-language-concepts/continuations}
-\input{tex/programming-language-concepts/encapsulation}
+%\part{Programming language concepts}\label{part:programming-language-concepts}
+%\input{tex/programming-language-concepts/data}
+%\input{tex/programming-language-concepts/references}
+%\input{tex/programming-language-concepts/continuations}
+%\input{tex/programming-language-concepts/encapsulation}
 
 \part{Systems and architectures}\label{part:systems-and-architectures}
 \input{tex/systems-and-architectures/operating-systems}
@@ -113,9 +115,13 @@
 \addtocontents{toc}{\protect\vspace*{\baselineskip}}
 
 %% The Bibliography
+% INFO : http://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{abbrv}
-\bibliography{bib/references}
+\bibliography{bib/books}
+\bibliography{bib/articles}
+\bibliography{bib/web}
+
 
 %% The List of Figures
 \clearpage

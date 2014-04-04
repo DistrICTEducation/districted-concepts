@@ -1,1 +1,231 @@
 \chapter{Access control}\label{chapter:access-control}
+
+\section{Lampson's model for access control}
+
+Security can be defined as the "prevention and detection of unauthorized actions on information" [2]. Frank Piessens distinguishes between two important cases depending on whether or not the attacker has direct access to data or not [1,2]:
+\begin{enumerate}
+	\item \textbf{An attacker has access to the raw bits representing the information} : This introduces the need for cryptographic techniques;
+	\item \textbf{There is a software layer between the attacker and the information} : Access control techniques are required;
+\end{enumerate}
+
+In this text we will look into access control techniques. To build such a software layer, Frank Piessens [1] identifies several important steps. First, a security policy determines what is allowed in the layer and what isn't. A number of important security policy models, called access control models, exist; we will look at them in more detail later. Secondly, a correct implementation is required of the policy. Any bug in the software is a vulnerability that can be potentially exploited by an attacker. This text deals mainly with the first step.
+
+\subsection{A general access control model}
+
+An access control model is a "class of policies with similar characteristics" [2]. \textbf{Figure} 1 shows the general access control model. Entity authentication is "the verification of the claimed identity of an entity (usually called principal) that the guard is interacting with" [2].
+
+\subsubsection{Principal}
+
+Depending on the nature of the principal, different solutions are needed. For example the principal can be a (human) user, a (remote) computer, a user working at a remote computer, a user running a specific piece of code [2], et cetera, as illustrated in \textbf{table} 1.
+
+
+\begin{table}[h]
+	\caption{Examples of actors and actions in the general access control model; adapted from [2].}
+	\label{tab:access-control:examples}
+	\begin{tabular}{p{75px} | p{75px} | p{75px} | p{75px} }
+		\textbf{Principal} & \textbf{Actions} 	& \textbf{Guard} & \textbf{Protected system} \\
+		\hline
+		Host 					& Packet send & Firewall							& Intranet 		\\
+		User 					& Open file 	& OS kernel							& File system \\
+		Java Program 	& Open file 	& Java Security Manager	& File 				\\
+		User 					& Query 			& DBMS									& Database 		\\
+		User 					& Get page 		& Web server						& Web site 		\\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+Authentication proceeds by verifying one or more requirements. For example, whether or not [2]:
+\begin{itemize}
+	\item The user knows a secret, e.g. a password, PIN, or other variation
+	\item The user has some physical characteristic of the user, e.g. using biometrics;
+	\item The user possesses a token, e.g. using a smartcard or digipass;
+	\item The user is at a specific location, e.g. through dialback;
+	\item The user can do something, using signatures, CAPTCHAs (\emph{Completely Automated Public Turing test to tell Computers and Humans Apart}).
+\end{itemize}
+
+
+
+\subsubsection{Guard}
+
+Next the guard continues with the authorization of the principal. Upon receipt of an action, the guard decides what to do with the action. Possibilities are to pass/drop, modify/replace, first insert other action, and so on [2]. In this text we will only consider pass/drop.
+
+Guards usually have a local state, e.g. "protection state". During or at the end of the authentication process, the guard may change its state [2].
+
+The guard is modeled by means of a security automaton. This is a set of states described by a number of typed state variables, where transition relations are described by predicates on the action and the local state [2].
+
+Actions are written as procedure invocations. The behavior of the guard is specified by a declaration of state variables and implementations of action procedures. State variables determine the state space. The implementations have corresponding preconditions that determine the acceptability of an action and an implementation body that determines the state update [2].
+
+An access control policy is "a set of rules that say what is allowed and what not" [2]. The semantics of a security policy is "a security automaton in a particular state" [2].
+
+An example given by Frank Piessens [2] is shown in \textbf{figure} 2 and \textbf{listing} 1.
+
+
+\section{Classic Access Control Models}
+
+\subsection{Discretionary Access Control (DAC)}
+
+Discretionary Access Control is a rather intuitive access control model. It is also one the most widely implemented ones. The objective of DAC is a creator-controlled sharing of information.
+
+In DAC principals are users. The protected system manages objects, which are passive entities requiring controlled access. Objects are accessed by means of operations on them. Every object has an owner that has access to the operation set, and can grant the rights to use operations to other users.
+
+Passing on of ownership is not always supported, or has one of more possible variants. For example whether or not is possible to delegate right to grant access or not, and in terms of constraints on revocation of rights.
+
+DAC is typically not implemented with a centralized protection state. Typical implementation structures include using Access Control Lists, e.g. ACL's in Windows 2000, or using Capabilities, e.g. Open file handles in Unix [2].
+
+
+\subsubsection{Access control matrix}
+
+The DAC policy can be represented as an access control matrix, as shown in \textbf{figure} 3. The access control matrix lists for each object (column) the set of operations that the subjects (rows) are authorized to invoke upon them [1].
+
+The subjects, or sessions, are threads or processes that perform operations on behalf of the user. A collection of all sessions with the same access rights, expressed as permissions, is called the protection domain. An access control policy assigns a permission set to each protection domain. Finally, the reference monitor enforces the security policy [1].
+
+In the example we objects such as files with corresponding {read,write,...} operation sets, for programs {execute,modify,...}, and for databases the typical CRUD {create,read,update,delete} operations, and so on. The different subjects in the access control matrix then are authenticated to access a subset of these operations.
+
+
+\subsubsection{Security automaton}
+
+
+
+\subsubsection{Disadvantages}
+
+The main advantage of discretionary access control is that it is conceptually simple [1]. When designing access control models, some choices and trade-offs will have to be made at some point, and as a result, discretionary access control also has a numer of disadvantages associated with it.
+
+The first disadvantage is that it is cumbersome to use in administration and may introduce significant overhead when many users are involved. For example scenarios where a user leaves the company or user has been promoted to another function in the company, will require some reorganization of permissions within parts of the company's computer system [1,2]. To counter this problem, some implementations have provided the ability to create groups and negative permissions. Procedures: business procedure involving many operations on many objects Unfortunately, this is often insufficient [1,2].
+
+Secondly, DAC is also not a very secure access control model. It is prone to social engineering and/or Trojan horse problems [1,2]. Both rely on the fact that an attacker can do everything the user can do once authenticated as that user. To solve this problem, users can be denied the right to change access rights, leading to Mandatory Access Control, discussed next. Alternatively, programs can also be regarded as no longer equal: distrusted programs run in a restricted environment [1].
+
+
+
+\subsection{Mandatory Access Control (MAC)}
+
+Mandatory access control (MAC) is an access control model designed to strictly control the information flow. It was designed by the military to function even in the presence of malicious software [1].
+
+Instead of the notion of owner of an object, MAC uses system-wide rules stating which access is allowed. Users simply follow these rules.
+
+A concrete example of the MAC model is Lattice Based Access Control (LBAC). In this model, a lattice of security labels is given, from highest to lowest: Top Secret, Secret, Confidential and Unclassified. Objects and users are then tagged with these security labels. A user can use the system with any level lower or equal to his/her clearance level [1]. The objective is then to enforce that users can only see information below their clearance and that information can only flow upward [2].
+
+To achieve this, the model imposes the following two rules [1]:
+\begin{enumerate}
+	\item \textbf{No read up} : A subject labeled with level $l_{s}$ can only read from objects with a sensitivity of level $l_{s}$ or below. For instance, a subject cleared for confidential documents can never read top secret files;
+	\item \textbf{No write down} : A subject labeled with level $l_{s}$ can only write to objects with a sensitivity of level $l_{s}$ or higher. For instance, a subject cleared for secret level can never write information to confidential files;
+\end{enumerate}
+
+Together they neutralize the Trojan horse problem. \textbf{Figure} 4 illustrates these rules.
+
+
+\subsubsection{The lattice}
+
+The typical construction of lattice goes as follows. Security labels are tuples of (level, compartment). Levels are ordered linearly, e.g. Top Secret - Secret - Confidential - Unclassified. Compartments are a set of categories, where category is a keyword relating to a project or area of interest. Compartments are ordered by subset inclusion [2].
+
+Users can then initiate subjects or sessions, and these are labeled on creation. Users of clearance $L$ can start subjects with any label $L' < L$ [2]. \textbf{Figure} 5 shows an example of a LBAC lattice.
+
+Figure 5 : LBAC lattice example.
+
+
+\subsubsection{Security automaton}
+
+The security automaton for LBAC is given in \textbf{listing} 3.
+
+
+
+\subsubsection{Disadvantages}
+
+Problems and disadvantages of LBAC include [1,2]:
+\begin{itemize}
+	\item \textbf{Flexibility} : Need for "trusted subjects" makes it less usable;
+	\item \textbf{Business needs} : The model is not well suited for commercial environments;
+	\item \textbf{Security} : Covert channels still form problems. E.g. by using physical signals of the system, e.g. power usage, CPU utilization, et cetera, information could still be leaked.
+\end{itemize}
+
+
+
+\subsection{Role-Based Access Control (RBAC)}
+
+Role-Based Access Control (RBAC) is an access control model. Its main objective is to achieve manageable access control. The key concept of the model is the role. This is a many-to-many relation between users and permissions, which can be thought of as a named set of permissions that can be assigned to users. Hence, a role should correspond to a well-defined job or responsibility [2], e.g. shop keeper, stock manager, et cetera.
+
+When a user starts a session, he can activate some or all of his roles. A session has all the permissions associated with the activated roles [2].
+
+RBAC is usually implemented in databases or into specific applications, or in a generic way in application servers. It can be "simulated" in operating systems using the group concept [2].
+
+
+
+
+\subsubsection{Security automaton}
+
+\textbf{Listing} 4 gives the automaton for role-based acccess control.
+
+
+
+
+\subsubsection{RBAC Extensions}
+
+A variation on RBAC uses hierarchical roles. In this model a senior role inherits all permissions from its junior role.
+
+RBAC roles may have to follow certain constraints. A distinction can be made between static and dynamic constraints. Static constraints on the assignment of users to roles are for example the static separation of duty: nobody can both order goods as well as approve payments [2].
+
+Dynamic constraints are constraints on the simultaneous activation of roles, e.g. to enforce least privilege [2].
+
+
+
+\subsection{Other Access Control Models}
+
+In [2] a number of other models are listed. Two of them are briefly explained below: the Biba model and the Chinese wall model.
+
+\subsubsection{Biba model}
+
+The objective of the Biba model is the Enforcement of integrity by information flow [2].
+
+
+\subsubsection{Chinese wall model}
+
+The Chinese wall model is a form of dynamic access control model [2]. For example, a consultant can only see company confidential information of one company in each potential-conflict-of-interest class.
+
+
+
+
+
+
+\section{Code Access Control}
+
+\subsection{Motivation}
+
+Modern applications often support run-time extensibility, possibly with downloaded code (e.g. applets or controls on web pages, browser plug-ins, web server extensibility (JSP / ASP), multimedia codecs, ...). One operation system process executes the application itself and all of its (possibly less trusted) extensions. One session or subject (process) typically has a fixed set of permissions. With untrusted code, the permissions of a subject may need to be reduced if the subject is currently executing less trusted code. As a result, classic operating system access control fails, so another access control architecture is needed [3].
+
+A component is a piece of software that is a unit of deployment and third party composable. An application can consist of multiple components. Some of these components are trusted more than others. An application can be extended at runtime with new components. We need security technologies that enables secure execution of such applications [3].
+
+
+\subsection{Sandboxing}
+
+Permissions encapsulate rights to access resources or perform operations. A security policy assigns (static) permissions to each component. Every resource access or sensitive operation contains an explicit check that through stack inspection finds out what components are active. An exception is thrown if a problem has been detected [3].
+
+A \emph{permission} is a representation of a right to perform some actions, e.g. FilePermission(name, mode) (wildcards possible), NetworkPermission, WindowPermission, ... Permissions have a set of semantics, hence one permission can imply (be a superset of) another one, e.g. FilePermission("*", "read") implies FilePermission("x","read"). Developers can define new custom permissions [3].
+
+A \emph{security policy} assigns permissions to components, typically implemented as a configurable function that maps evidence to permissions. Evidence is security-relevant information about the component, e.g. Where did it come from? Was it digitally signed and if so by whom? When loading a component, the VM consults the security policy and remembers the permissions? [3]
+
+
+\subsubsection{Stack inspection}
+
+Every resource access or sensitive operation exposed by the platform class library is protected by a demandPermission(P) call for an appropriate permission P. The algorithm implemented by demandPermission() is based on stack inspection or stack walking. The fact that this is secure strongly depends on the safety of the programming language. This would not work for example in C [3].
+
+\subsubsection{Stack walking}
+
+Suppose thread T tries to access a resource. Basic rule: this access is allowed if all components on the call stack have the right to access the resource [3].
+
+Basic algorithm is too restrictive in some cases, e.g. giving a partially trusted component the right to open marked windows without giving it the right to open arbitrary windows. A solution is introduced by stack walk modifiers [3]:
+\begin{itemize}
+	\item \textbf{Enable\_permission(P)} : Don't check my callers for this permission, I take full responsibility. Essential to implement controlled access to resources for less trusted code;
+	\item \textbf{Disable\_permission(P)} : Don't grant me this permission, I don't need it. Supports principle of least privilege.
+\end{itemize}
+
+
+\textbf{Listing} 5 gives the automaton for stack walking.
+
+
+
+\section{Conclusions}
+
+Most access control mechanisms implement the Lampson model: Principal - Action - Guard - Protected system. Security automata are a powerful notion to represent the semantics of access control policies. Three important categories of access control policy models each have their own area of applicability. DAC in operating systems. RBAC in applications and databases. LBAC starting to find its use for integrity protection. Code access control requires other policy models [3].
+

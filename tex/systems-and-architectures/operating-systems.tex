@@ -1,1 +1,52 @@
 \chapter{Operating systems}\label{chapter:operating-systems}
+
+\section{Processes}
+
+\section{Concurrency}
+
+\section{Scheduling}
+
+\section{Memory}
+
+\subsection{Stack-based memory allocation}
+
+In stack-based memory allocation, when a function is executed, some of the function's state is pushed onto the stack. The stack is a last-in-first-out (LIFO) data structure [4].
+
+A stack contains a set of locations that will be used for storing data. As the stack is implemented as a single block of memory, the following three addresses are required [4]:
+\begin{enumerate}
+	\item \textbf{Stack pointer} : Contains the address of the top of the stack;
+	\item \textbf{Stack base} : Contains the address of the lowest location in the reserved memory block;
+	\item \textbf{Stack limit} : Contains the address of the top of the reserved memory block;
+\end{enumerate}
+
+
+\textbf{Table} \ref{} lists the general methods that can be invoked on the stack. Items can be added to the top of the datastructure via a push command. Items can only be accessed by taking them one by one from the top of the stack with the pop command [4].
+
+\begin{table}
+	\caption{Method list for the stack.}
+	\label{tab:api:groupcommunication}
+	\begin{tabular}{p{150px} | p{250px}}
+		\textbf{Operation} & \textbf{Description} \\
+		\hline
+		push (Item) 						& \emph{Add a new item to the top of the stack. The stack pointer will now point at the address of the new top of the stack.} \\
+		pop () $\rightarrow$ Item & \emph{Take the top item from the top of the stack. The stack pointer is adjusted.} \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+The stack itself contains stack frames and a stack frame pointer. A stack frame has the following contents:
+\begin{itemize}
+	\item The actual parameters of the function call;
+	\item The local variables of the current function call;
+	\item The return address where the function should continue after return from the function;
+	\item The previous stack frame pointer.
+\end{itemize}
+
+
+
+\subsection{Dynamic memory allocation}
+
+Dynamic memory allocation or heap-based memory allocation is used to dynamically allocate memory from the heap to programs as needed. Memory is freed once the program no longer requires it [5].
+
+Memory management is prone to external fragmentation. This occurs when certain memory parts are freed, but new programs can't fit perfectly in the freed space [4]. Another challenge for memory management are memory leaks [5].
