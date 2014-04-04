@@ -87,7 +87,59 @@ In the example we objects such as files with corresponding {read,write,...} oper
 
 \subsubsection{Security automaton}
 
+The security automaton for DAC is given in \textbf{listing \ref{listing:dac}}.
 
+\begin{lstlisting}[language=java, caption=Security automaton for DAC., label=listing:dac]
+type Right = <User, Obj, {read, write}>;
+Set<User> users = new Set();
+Set<Obj> objects = new Set();
+Set<Right> rights = new Set(); // represents the Access Control Matrix
+Map<Obj,User> ownerOf = new Map(); 
+
+// Access checks
+void read(User u, Obj o)
+	requires <u,o,read> in rights;
+{}
+
+void write(User u, Obj o)
+	requires <u,o,write> in rights;
+{}
+
+// Actions that impact the protection state
+void addRight(User u, Right <u2,o,r>)
+	requires (u in users) && (u2 in users) && (o in objects) && ownerOf[o] == u;
+{
+	rights[<u2,o,r>] = true; // means: add <u2,o,r> to the rights set
+} 
+
+void deleteRight(User u, Right <u2,o,r>) 
+	requires (u in users) && (u2 in users) && (o in objects) && ownerOf[o] == u;
+{
+	rights[<u2,o,r>] = false;
+}
+
+void addObject(User u, Obj o)
+	requires (u in users) && (o notin objects);
+{
+	objects[o] = true;
+	ownerOf[o] = u;
+} 
+
+void delObject(User u, Obj o) 
+	requires (o in objects) && (ownerOf[o] == u);
+{
+	objects[o] = false;
+	ownerOf[o] = none; 
+	rights = rights \ { <u2,o2,r2> in rights where o2==o};
+}
+
+// Administrative functions
+void addUser(User u, User u2)
+	requires u2 notin users;
+{
+	users[u2] = true;
+}
+\end{lstlisting}
 
 \subsubsection{Disadvantages}
 
@@ -127,8 +179,45 @@ Figure 5 : LBAC lattice example.
 
 \subsubsection{Security automaton}
 
-The security automaton for LBAC is given in \textbf{listing} 3.
+The security automaton for LBAC is given in \textbf{listing \ref{listing:lbac}}.
 
+\begin{lstlisting}[language=java, caption=Security automaton for LBAC., label=listing:lbac]
+// Stable part of the protection state
+Set<User> users; 
+Map<User,Label> ulabel; // clearance of users
+
+// Dynamic part of the protection state
+Set<Obj> objects = new Set(); 
+Set<Session> sessions = new Set();
+Map<Session, Label> slabel = new Map(); // label of sessions
+Map<Obj,Label> olabel = new Map(); // label of objects
+
+// No read up
+void read(Session s, Obj o) 
+	requires s in sessions && o in objects && slabel[s] >= olabel[o];
+{}
+
+// No write down
+void write(Session s, Obj o)
+	requires s in sessions && o in objects && slabel[s] <= olabel[o];
+{}
+
+// Managing sessions and objects
+void addObject(Session s, Obj o, Label l) 
+	requires (s in sessions) && (o notin objects) && slabel[s] <= l;
+{
+	objects[o] = true;
+	olabel[o] = l;
+}
+
+void createSession(User u, Label l) 
+	requires (u in users) && ulabel[u] >= l;
+{
+	s = new Session();
+	sessions[s] = true; 
+	slabel[s] = l;
+}
+\end{lstlisting}
 
 
 \subsubsection{Disadvantages}
@@ -155,8 +244,41 @@ RBAC is usually implemented in databases or into specific applications, or in a 
 
 \subsubsection{Security automaton}
 
-\textbf{Listing} 4 gives the automaton for role-based acccess control.
+\textbf{Listing \ref{listing:rbac}} gives the automaton for role-based acccess control.
 
+\begin{lstlisting}[language=java, caption=Security automaton for RBAC., label=listing:rbac]
+// stable part of the protection state
+Set<User> users; 
+Set<Role> roles;
+Set<Permission> perms;
+Map<User, Set<Role>> ua; // set of roles assigned to each user
+Map<Role, Set<Permission>> pa; // permissions assigned to each role
+
+// dynamic part of the protection state
+Set<Session> sessions;
+Map<Session,Set<Role>> session_roles;
+Map<User,Set<Session>> user_sessions;
+
+// access check
+void checkAccess(Session s, Permission p) 
+	requires s in sessions && Exists{ r in session_roles[s]; p in pa[r]};
+{}
+
+void createSession(User u, Set<Role> rs) 
+	requires (u in users) && ua[u] > rs;
+{
+	Session s = new Session();
+	sessions[s] = true; 
+	session_roles[s] = rs;
+	user_sessions[u][s] = true;
+}
+
+void dropRole(User u, Session s, Role r) 
+	requires (u in users) && (s in user_sessions[u]) && (r in session_roles[s]);
+{
+	session_roles[s][r] = false;
+}
+\end{lstlisting}
 
 
 
@@ -221,8 +343,53 @@ Basic algorithm is too restrictive in some cases, e.g. giving a partially truste
 \end{itemize}
 
 
-\textbf{Listing} 5 gives the automaton for stack walking.
+\textbf{Listing \ref{listing:stack-walking}} gives the automaton for stack walking.
 
+
+\begin{lstlisting}[language=java, caption=Security automaton for stack walking., label=listing:stack-walking]
+// NOTE: only support for enabling of permissions, atomic permissions, and single threading
+type StackFrame = <Component,Set<Permission>> // set of enabled perms
+Set<Component> components = new Set();
+Map<Component,Set<Permission>> perms = new Map(); // static permissions
+List<StackFrame> callstack = new List();
+
+// Access checks
+void demand(Permission p)
+	requires demandOK(callstack, p);
+{}
+
+bool demandOK(List<StackFrame> stack, Permission p) // pure helper function
+{
+	foreach (<cp, ep> in stack) {
+		if ! (p in perms[cp]) return false;
+		if (p in ep) return true;
+	};
+	return true;
+}
+
+// Enabling a permission
+void enable(Permission p)
+	requires (let <c,ep> = callstack.Top in ( p in perms[c] )); 
+{
+	<c,ep> = callstack.Pop();
+	ep[p] = true;
+	callstack.Push(<c, ep>);
+}
+
+// calling a function in component c
+void call(Component c)
+	requires (c in components);
+{
+	callstack.Push(<c,{}>);
+}
+
+// returning from a function
+void return() 
+	requires true;
+{
+	callstack.Pop();
+}
+\end{lstlisting}
 
 
 \section{Conclusions}
