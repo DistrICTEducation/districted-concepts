@@ -69,11 +69,21 @@ The general model for a node in a recursive data structure is shown in figure \r
 \end{figure}
 
 
+Recursive data structures are usually dynamic, as adding, removing and inserting items can be done in constant time. The performance of finding elements in recursive data structures depends a lot on the type of query and the data structure itself, as we will see further.
+
+
 \subsubsection{Linked lists}
 
 A linked list is an ordered sequence of data elements contained in nodes. Nodes have a one-to-one parent-child relationship among them. The root node has no parent and the end node has no child. Traversing all the elements of a linked list occurs by starting at the root and each time going to the next element via the child reference of each node.
 
+In general finding an item at a specific index requires linear time in worst case. However, by retaining certain meta-data, it is possible to add some speed-ups, of course at cost of memory usage and a performance cost to keep these additional fields up-to-date.
 
+\begin{lstlisting}[language=java, caption=Node implementation for a linked list., label=listing:node-linked-list]
+public class Node<E> {
+	public E value;
+	public Node next;
+}
+\end{lstlisting}
 
 
 \paragraph{Doubly-linked list}
