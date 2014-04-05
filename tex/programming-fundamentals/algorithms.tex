@@ -1,9 +1,86 @@
 \chapter{Algorithms}\label{chapter:algorithms}
 
+\section{Statements}
+
+Before we start introducing algorithms, we first take a look at the control structures that drive them. Statements are the unit of programming; they tell the computer which tasks to perform.
+
 \section{Sorting}
+
+\subsection{Selection sort}
+
+
+
+
+
+
+\subsection{Insertion sort}
+
+\begin{algorithm}[H]
+	{
+		\SetAlgoLined
+		\KwData{Data structure $D$ from algorithm \ref{alg:loadingvis}, active user $active$.}
+		\KwResult{JSON file $JSON$ as in listing \ref{listing:jsonfile}.}
+		$JSON$ $\leftarrow$ $\{\}$ \;
+		% artistMAP = map where artists are keys, for each key there is a list of users.
+		% FOR EACH ARTIST
+		\ForEach{Artist $a$ in $D$.$artistMap$.$keys$}{
+			$artist$ $\leftarrow$ $\{\}$ \;
+			$artist$.put ("name", "item." + $a$.$name$)\;
+			$isrecommendation$ $\leftarrow$ false \;
+			% FOR EACH USER
+			\ForEach{User $u$ in $D$.$artistMap$[$a$]}{
+				% userMAP = map where users are keys, for each key there is a list of artists.
+				\If{$u$.equals ($active$)}{
+					$isrecommendation$ $=$ true\;
+				}
+				\ForEach{Artist $d$ in $D$.$userMap$[$u$]}{
+					$artist$.append ("edges", "item." + $d$.$name$ + ".user." + $u$.$name$)\;
+				}
+			}
+			$artist$.put ("recommendation", $isrecommendation$)\;
+			$JSON$.append ($artist$)\;
+		}
+		\ForEach{User $u$ in $D$.$userMap$.$keys$}{
+				% FOR EACH USER
+				$user$ $\leftarrow$ $\{\}$ \;
+				$user$.put ("name", $u$.$name$)\;
+				$user$.put ("active", $u$.equals ($active$))\;
+				% userMAP = map where users are keys, for each key there is a list of artists.
+				\ForEach{Artist $d$ in $D$.$userMap$[$u$]}{
+					$user$.append ("owned", "item." + $d$.$name$)
+				}
+				$JSON$.append ($user$)\;
+			}
+		}
+	\caption{The selection sort algorithm.}
+	\label{alg:selection-sort}
+\end{algorithm}
+
+
+
+
+
+
+\subsection{Merge sort}
+
+
+
+\subsection{Quick sort}
+
+
+
+
+
+
 \section{Searching}
-\section{Artificial intelligence}
-\section{Data mining}
-\section{Voronoi diagrams}
-\section{Backward ray tracing}
+
+
+
+
+
+
+%\section{Artificial intelligence}
+%\section{Data mining}
+%\section{Voronoi diagrams}
+%\section{Backward ray tracing}
 
